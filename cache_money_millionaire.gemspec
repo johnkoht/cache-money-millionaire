@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["john@kohactive.com"]
   spec.description   = "Rails ActiveRecord Query Caching like a Millionaire"
   spec.summary       = "Rails ActiveRecord Query Caching like a Millionaire"
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/johnkoht/cache-money-millionaire"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
