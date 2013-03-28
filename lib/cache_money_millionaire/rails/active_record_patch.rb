@@ -21,7 +21,10 @@ module ActiveRecord
       # If it's cacheable and cache isn't set to false, then let's CacheMoneyMillionaire this bitch!
       # We set the cache key to the object class name and id, i.e. Post 3, User 109, etc.
       if CacheMoneyMillionaire.cacheable? and cache
-        model = Rails.cache.fetch (Digest::MD5.hexdigest "#{self} #{args[0]}"), expires_in: CacheMoneyMillionaire.options[:expires_in] do
+        puts "#{self} #{args[0]}"
+        cache_key = Digest::MD5.hexdigest "#{self} #{args[0]}"
+        puts cache_key.inspect
+        model = Rails.cache.fetch cache_key, expires_in: CacheMoneyMillionaire.options[:expires_in] do
           super *args
         end
       else
@@ -53,6 +56,15 @@ module ActiveRecord
       if CacheMoneyMillionaire.cacheable?
         cache_key = Digest::MD5.hexdigest "#{self.class.name} #{self.id}"
         Rails.cache.write cache_key, self
+        
+        # Friendly id patch
+        # If you're using friendly id, then a slug is probably passed, passed as the parameter, instead of 
+        # the ID. This will check if the model responds to friend_id, if so, it will create an additional
+        # cache_key with the slug
+        if self.respond_to? :friendly_id
+          cache_key = Digest::MD5.hexdigest "#{self.class.name} #{self.friendly_id}"
+          Rails.cache.write cache_key, self
+        end
       else
         false
       end

@@ -23,7 +23,6 @@ module CacheMoneyMillionaire
     # setting is true
     def cacheable?
       Rails.application.config.action_controller.perform_caching and options[:cacheable]
-      #true
     end
         
   end
