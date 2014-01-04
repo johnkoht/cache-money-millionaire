@@ -15,13 +15,19 @@ module ActiveRecord
       # variable based on it's validity. Then we'll remove from the arguments and pass
       # the original arguments back into our hash
       options = args.extract_options!
-      cache = options.delete(:cache) || true
+
+      if options.has_key? :cache
+        cache = options[:cache]
+        options.delete(:cache)
+      else
+        cache = true
+      end
+
       args.push(options)
       
       # If it's cacheable and cache isn't set to false, then let's CacheMoneyMillionaire this bitch!
       # We set the cache key to the object class name and id, i.e. Post 3, User 109, etc.
       if CacheMoneyMillionaire.cacheable? and cache
-        puts "#{self} #{args[0]}"
         cache_key = Digest::MD5.hexdigest "#{self} #{args[0]}"
         puts cache_key.inspect
         model = Rails.cache.fetch cache_key, expires_in: CacheMoneyMillionaire.options[:expires_in] do
