@@ -3,6 +3,8 @@ module ActiveRecord
     
     # Include the CacheMoneyMillionaire module
     extend CacheMoneyMillionaire
+
+    attr_accessor :cache
     
     
     # Extend the find method for ActiveRecord
@@ -29,7 +31,6 @@ module ActiveRecord
       # We set the cache key to the object class name and id, i.e. Post 3, User 109, etc.
       if CacheMoneyMillionaire.cacheable? and cache
         cache_key = Digest::MD5.hexdigest "#{self} #{args[0]}"
-        puts cache_key.inspect
         model = Rails.cache.fetch cache_key, expires_in: CacheMoneyMillionaire.options[:expires_in] do
           super *args
         end
